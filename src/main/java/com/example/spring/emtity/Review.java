@@ -19,6 +19,9 @@ public class Review {
     @Column(nullable = false, columnDefinition = "float default 0.0")
     private Float score;
 
+    @Column(length = 256, nullable = false)
+    private String subject;
+
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
