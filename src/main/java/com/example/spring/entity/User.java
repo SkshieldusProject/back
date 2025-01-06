@@ -1,5 +1,7 @@
 package com.example.spring.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,9 +38,11 @@ public class User implements UserDetails {
     private LocalDate registerDate;
 
     @ManyToMany(mappedBy = "recommendationUsers")
+    @JsonIgnore
     private List<Review> recommendedReviews;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @JsonIgnore
     private List<Review> reviews;
 
     @Builder

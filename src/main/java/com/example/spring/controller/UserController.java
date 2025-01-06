@@ -1,19 +1,24 @@
 package com.example.spring.controller;
 
 
+import com.example.spring.dto.ReviewDto;
 import com.example.spring.dto.UserDto;
+import com.example.spring.service.ReviewService;
 import com.example.spring.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -22,6 +27,9 @@ import java.util.NoSuchElementException;
 public class UserController {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final ReviewService reviewService;
+
+
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     // 제이슨 형식
@@ -96,16 +104,36 @@ public class UserController {
     // 8
 
 
-//    @GetMapping("/reviews")
-//    public ResponseEntity<String> reviews() {
-//        try{
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            String userId = authentication.getName();
-//            UserDto userDto = userService.getOneUser(userId);
-//        } catch () {
-//
-//        }
-//    }
+    @GetMapping("/reviews")
+    // 현재 접속하고 있는 유저가 작성한 모든 리뷰를 전달함
+    public ResponseEntity<List<ReviewDto>> reviews() {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userId = authentication.getName();
+            UserDto userDto = userService.getOneUser(userId);
+            List<ReviewDto> reviewDtos = userService.getUserReviews(userDto);
+            System.out.println(reviewDtos.size());
+            // 응답데이터
+            // score,subject, content, createDate,
+            // recommendationUsers: 해당 리뷰 추천한 유저 리스트 -> 추천수는 recommendationUsers.length 이런식으로 구함
+            // movie : 리뷰한 영화, user : 작성한 유저
+            return ResponseEntity.ok(reviewDtos);
 
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @PostMapping("/findId")
+    public ResponseEntity<List<UserDto>> findId(@RequestParam String email, @RequestParam String phoneNumber) {
+        try{
+            List<UserDto> userDtos = userService.findUserByEmailAndPhoneNumber(email, phoneNumber);
+            return ResponseEntity.ok(userDtos);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+    }
 
 }

@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
@@ -20,6 +22,21 @@ import static org.springframework.boot.autoconfigure.security.servlet.PathReques
 @Configuration
 public class AppSecurityConfig {
     private final UserDetailService userDetailService;
+
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**") // 모든 요청에 대해 CORS 허용
+                        .allowedOrigins("http://localhost:3000") // CORS 허용할 도메인
+                        .allowedMethods("GET", "POST", "PUT", "DELETE") // 허용할 HTTP 메서드
+                        .allowedHeaders("*") // 허용할 헤더
+                        .allowCredentials(true); // 자격 증명 포함 여부
+            }
+        };
+    }
 
     // 예외처리
     @Bean
@@ -36,16 +53,17 @@ public class AppSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
                 .csrf().disable()
+                .cors()
+                .and()
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 .and()
                 // 1. 인증이 필요한 페이지와 아닌 페이지
                 .authorizeRequests()
                     // 아래 페이지는 인증 필요 x
-                    .requestMatchers("/login", "/user/signup","/user/signup1_process", "/user/signup2_process").permitAll() //허가
-                    // 나머지 모든 페이지는 인증 필요
-                    //.requestMatchers(toH2Console()).authenticated()
-                    .anyRequest().authenticated()
+                    .requestMatchers("/login", "/user/signup","/user/signup1_process", "/user/signup2_process"
+                    , "/user/findId").permitAll() //허가
+                    .anyRequest().authenticated() // 나머지는 안됨
                 .and()
                 // 2. 로그인 페이지(커스텀), 로그인 성공 후 포워딩 페이지등 지정
                 .formLogin()
@@ -70,7 +88,12 @@ public class AppSecurityConfig {
                     response.getWriter().write("Logout successful! hihii");
                 }) // 로그아웃 성공 시 커스텀 응답
                 .and()
-
+                .exceptionHandling()
+                    .authenticationEntryPoint(((request, response, authException) -> {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.getWriter().write("Authentication required");
+                    }))
+                .and()
                 .build();
     }
 
