@@ -1,4 +1,4 @@
-package com.example.spring.emtity;
+package com.example.spring.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,5 +45,13 @@ public class Movie {
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.REMOVE)
     private List<Review> movieReviews;
+
+    @Builder
+    public Movie(String director, String title, String plot, LocalDate releaseDate) {
+        this.director = director;
+        this.title = title;
+        this.plot = plot;
+        this.releaseDate = releaseDate;
+    }
 
 }

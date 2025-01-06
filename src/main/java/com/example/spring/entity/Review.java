@@ -1,6 +1,7 @@
-package com.example.spring.emtity;
+package com.example.spring.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,6 +37,16 @@ public class Review {
 
     @ManyToOne
     private User user;
+
+    @Builder
+    public Review (Float score, String subject, String content, LocalDateTime createDate, Movie movie, User user) {
+        this.score = score;
+        this.subject = subject;
+        this.content = content;
+        this.createDate = createDate;
+        this.movie = movie;
+        this.user = user;
+    }
 
 
 
