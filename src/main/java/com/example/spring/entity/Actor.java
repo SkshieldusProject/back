@@ -24,7 +24,8 @@ public class Actor {
     private List<Movie> movies;
 
     @Builder
-    public Actor(String name, List<Movie> movies) {
+    public Actor(long id, String name, List<Movie> movies) {
+        this.id = id;
         this.name = name;
         this.movies = movies;
     }

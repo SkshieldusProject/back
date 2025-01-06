@@ -47,7 +47,8 @@ public class Movie {
     private List<Review> movieReviews;
 
     @Builder
-    public Movie(String director, String title, String plot, LocalDate releaseDate) {
+    public Movie(long id, String director, String title, String plot, LocalDate releaseDate) {
+        this.id = id;
         this.director = director;
         this.title = title;
         this.plot = plot;
