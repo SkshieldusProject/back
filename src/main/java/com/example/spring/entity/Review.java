@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,8 +30,14 @@ public class Review {
     @Column(nullable = false)
     private LocalDateTime createDate;
 
-    @Column(columnDefinition = "bigint default 0")
-    private long recommendation;
+
+    @ManyToMany
+    @JoinTable(
+            name = "reviewRecommendations",
+            joinColumns = @JoinColumn(name = "review_id"),
+            inverseJoinColumns = @JoinColumn(name="user_id")
+    )
+    private List<User> recommendationUsers;
 
     @ManyToOne
     private Movie movie;
@@ -39,11 +46,13 @@ public class Review {
     private User user;
 
     @Builder
-    public Review (Float score, String subject, String content, LocalDateTime createDate, Movie movie, User user) {
+    public Review (long id, Float score, String subject, String content, LocalDateTime createDate, List<User> recommendationUsers, Movie movie, User user) {
+        this.id = id;
         this.score = score;
         this.subject = subject;
         this.content = content;
         this.createDate = createDate;
+        this.recommendationUsers = recommendationUsers;
         this.movie = movie;
         this.user = user;
     }

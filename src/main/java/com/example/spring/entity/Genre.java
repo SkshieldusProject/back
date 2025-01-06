@@ -24,7 +24,8 @@ public class Genre {
     private List<Movie> movies;
 
     @Builder
-    public Genre(String name, List<Movie> movies) {
+    public Genre(long id, String name, List<Movie> movies) {
+        this.id = id;
         this.name = name;
         this.movies = movies;
     }
