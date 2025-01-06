@@ -18,7 +18,7 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(unique=true, nullable = false) // name="컬럼명 변경"
     private String userId;
@@ -35,11 +35,16 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private LocalDate registerDate;
 
-    @OneToMany
+    @ManyToMany(mappedBy = "recommendationUsers")
+    private List<Review> recommendedReviews;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Review> reviews;
 
     @Builder
-    public User(String userId, String password, String email, String phoneNumber, LocalDate registerDate, List<Review> reviews) {
+    public User(long id, String userId, String password, String email, String phoneNumber,
+                LocalDate registerDate, List<Review> recommendedReviews, List<Review> reviews) {
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.email = email;

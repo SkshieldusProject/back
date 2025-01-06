@@ -9,9 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
@@ -71,9 +74,37 @@ public class UserController {
         }
     }
 
-//    @GetMapping("/detail")
-//    public ResponseEntity<String> detail(@RequestParam String userId) {
+    @PostMapping("/modify")
+    public ResponseEntity<String> modify(@RequestParam String phoneNumber) {
+        logger.info(phoneNumber);
+        //logger.info("아이디는"+id);
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userId = authentication.getName();
+            System.out.println(userId);
+            UserDto userDto = userService.getOneUser(userId);
+            System.out.println("모디파이에서 가져온 dto "+ userDto.toString());
+            userDto.setPhoneNumber(phoneNumber);
+            userService.modify(userDto);
+            return ResponseEntity.ok("Modify successful");
+
+        }catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // 8
+
+
+//    @GetMapping("/reviews")
+//    public ResponseEntity<String> reviews() {
+//        try{
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//            String userId = authentication.getName();
+//            UserDto userDto = userService.getOneUser(userId);
+//        } catch () {
 //
+//        }
 //    }
 
 

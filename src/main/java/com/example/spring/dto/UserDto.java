@@ -17,6 +17,8 @@ import java.util.List;
 @ToString
 @Builder
 public class UserDto {
+    private Long id;
+
     private String userId;
 
     private String password;
@@ -27,15 +29,19 @@ public class UserDto {
 
     private LocalDate registerDate;
 
+    private List<Review> recommendedReviews;
+
     private List<Review> reviews;
 
     public User toEntity() {
         return User.builder()
+                .id(this.id)
                 .userId(this.userId)
                 .password(this.password)
                 .email(this.email)
                 .phoneNumber(this.phoneNumber)
                 .registerDate(this.registerDate)
+                .recommendedReviews(this.recommendedReviews)
                 .reviews(this.reviews)
                 .build();
     }
