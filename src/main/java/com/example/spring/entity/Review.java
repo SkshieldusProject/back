@@ -1,5 +1,7 @@
 package com.example.spring.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,12 +39,14 @@ public class Review {
             joinColumns = @JoinColumn(name = "review_id"),
             inverseJoinColumns = @JoinColumn(name="user_id")
     )
+    @JsonIgnore
     private List<User> recommendationUsers;
 
     @ManyToOne
     private Movie movie;
 
     @ManyToOne
+    @JsonIgnore
     private User user;
 
     @Builder
