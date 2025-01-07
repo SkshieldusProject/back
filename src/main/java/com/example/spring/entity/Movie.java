@@ -1,5 +1,6 @@
 package com.example.spring.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,6 +45,7 @@ public class Movie {
     private List<Genre> genres;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.REMOVE)
+    @JsonIgnore
     private List<Review> movieReviews;
 
     @Builder
