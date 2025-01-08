@@ -17,11 +17,9 @@ public class ReviewService{
     @Autowired
     private UserService userService;
 
-
     public ReviewService(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
     }
-
 
     public List<Review> findReviewsByUserId(Long userId) {
         return reviewRepository.findByUserId(userId);
@@ -48,22 +46,4 @@ public class ReviewService{
         Review existingReview = findReviewById(reviewId);
         reviewRepository.delete(existingReview);
     }
-
-//    public List<ReviewDto> getUserReviews(Long userId){
-//        List<Review> reviews = reviewRepository.findByUser_Id(userId);
-//        List<ReviewDto> reviewDtos = new ArrayList<ReviewDto>();
-//        for(Review review : reviews){
-//            reviewDtos.add(ReviewDto.builder()
-//                            .id(review.getId())
-//                            .user(review.getUser())
-//                            .movie(review.getMovie())
-//                            .score(review.getScore())
-//                            .content(review.getContent())
-//                            .recommendationUsers(review.getRecommendationUsers())
-//                            .subject(review.getSubject())
-//                            .createDate(review.getCreateDate())
-//                    .build());
-//        }
-//        return reviewDtos;
-//    }
 }
