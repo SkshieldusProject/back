@@ -18,21 +18,29 @@ import java.util.List;
 @Builder
 public class ReviewDto {
     private long id;
-
     private Float score;
-
     private String subject;
-
     private String content;
-
     private LocalDateTime createDate;
-
     private List<User> recommendationUsers;
-
     private Movie movie;
-
     private User user;
 
+    // 정적 팩토리 메서드: 엔티티 -> DTO 변환
+    public static ReviewDto fromEntity(Review review) {
+        return ReviewDto.builder()
+                .id(review.getId())
+                .score(review.getScore())
+                .subject(review.getSubject())
+                .content(review.getContent())
+                .createDate(review.getCreateDate())
+                .recommendationUsers(review.getRecommendationUsers())
+                .movie(review.getMovie())
+                .user(review.getUser())
+                .build();
+    }
+
+    // 엔티티 변환 메서드: DTO -> 엔티티
     public Review toEntity() {
         return Review.builder()
                 .id(id)
