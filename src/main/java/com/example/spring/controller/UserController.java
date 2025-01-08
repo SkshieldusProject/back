@@ -32,35 +32,9 @@ public class UserController {
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    // 제이슨 형식
-    @PostMapping("/signup1_process")
-    public ResponseEntity<String> signup(@RequestBody UserDto userDto) {
-        // 입력 이름이 uerDto 형식에 맞으면 잘 들어오는거
-        logger.info("회원가입 시도");
-        logger.info(userDto.toString());
-        try{
-            userService.register(UserDto.builder()
-                            .userId(userDto.getUserId())
-                            .password(userDto.getPassword())
-                            .email(userDto.getEmail())
-                            .phoneNumber(userDto.getPhoneNumber())
-                            .registerDate(LocalDate.now())
-                    .build());
-            return ResponseEntity.ok("Signup successful");
-        } catch (DataIntegrityViolationException e) {
-            // user id가 이미 존재하는데 또 가입하려 한다면
-            // 또는 널 값이 들어오면다면 데이터 무결성에 위반되어서 해당 에러 출력
-            logger.info("회원가입 실패");
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-
-    }
-
-
-
     // 폼 형식
-    @PostMapping("/signup2_process")
-    public ResponseEntity<String> signup2(@RequestParam String userId, @RequestParam String password,
+    @PostMapping("/signup_process")
+    public ResponseEntity<String> signup(@RequestParam String userId, @RequestParam String password,
     @RequestParam String email, @RequestParam String phoneNumber) {
         logger.info("회원가입 시도");
         logger.info(userId);
@@ -101,29 +75,6 @@ public class UserController {
         }
     }
 
-    // 8
-
-
-    @GetMapping("/reviews")
-    // 현재 접속하고 있는 유저가 작성한 모든 리뷰를 전달함
-    public ResponseEntity<List<ReviewDto>> reviews() {
-        try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String userId = authentication.getName();
-            UserDto userDto = userService.getOneUser(userId);
-            List<ReviewDto> reviewDtos = userService.getUserReviews(userDto);
-            System.out.println(reviewDtos.size());
-            // 응답데이터
-            // score,subject, content, createDate,
-            // recommendationUsers: 해당 리뷰 추천한 유저 리스트 -> 추천수는 recommendationUsers.length 이런식으로 구함
-            // movie : 리뷰한 영화, user : 작성한 유저
-            return ResponseEntity.ok(reviewDtos);
-
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
 
     @PostMapping("/findId")
     public ResponseEntity<List<UserDto>> findId(@RequestParam String email, @RequestParam String phoneNumber) {
