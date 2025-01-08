@@ -33,6 +33,7 @@ public class UserService {
                         .build());
         System.out.println("완료");
     }
+
     public UserDto getOneUser(String userId) {
         Optional<User> oUser = userRepository.findByUserId(userId);
         if(oUser.isPresent()) {
