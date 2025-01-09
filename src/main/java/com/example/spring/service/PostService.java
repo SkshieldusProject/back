@@ -54,4 +54,8 @@ public class PostService {
     public void deletePost(PostDto postDto) {
         postRepository.delete(postDto.toEntity());
     }
+
+    public void modify(PostDto postDto) {
+        postRepository.save(postDto.toEntity());
+    }
 }
