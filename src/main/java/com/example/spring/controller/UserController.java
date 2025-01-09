@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -77,10 +78,12 @@ public class UserController {
 
 
     @PostMapping("/findId")
-    public ResponseEntity<List<UserDto>> findId(@RequestParam String email, @RequestParam String phoneNumber) {
+    public ResponseEntity<?> findId(@RequestParam String email, @RequestParam String phoneNumber) {
         try{
             List<UserDto> userDtos = userService.findUserByEmailAndPhoneNumber(email, phoneNumber);
-            return ResponseEntity.ok(userDtos);
+            return ResponseEntity.ok(Map.of(
+                    "users", userDtos
+            ));
         } catch (NoSuchElementException e) {
             return ResponseEntity.badRequest().body(null);
         }
