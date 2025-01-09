@@ -41,7 +41,6 @@ public class UserDto {
                 .email(this.email)
                 .phoneNumber(this.phoneNumber)
                 .registerDate(this.registerDate)
-                .recommendedReviews(this.recommendedReviews)
                 .reviews(this.reviews)
                 .build();
     }

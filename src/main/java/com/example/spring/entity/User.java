@@ -45,9 +45,13 @@ public class User implements UserDetails {
     @JsonIgnore
     private List<Review> reviews;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Post> userPosts;
+
     @Builder
     public User(long id, String userId, String password, String email, String phoneNumber,
-                LocalDate registerDate, List<Review> recommendedReviews, List<Review> reviews) {
+                LocalDate registerDate, List<Review> reviews, List<Post> userPosts) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -55,6 +59,7 @@ public class User implements UserDetails {
         this.phoneNumber = phoneNumber;
         this.registerDate = registerDate;
         this.reviews = reviews;
+        this.userPosts = userPosts;
     }
 
     @Override

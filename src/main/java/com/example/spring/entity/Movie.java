@@ -27,6 +27,7 @@ public class Movie {
 
     @Column(nullable = false)
     private LocalDate releaseDate;
+
     @ManyToMany
     @JoinTable(
             name = "movieactor",
@@ -48,13 +49,20 @@ public class Movie {
     @JsonIgnore
     private List<Review> movieReviews;
 
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Post> moviePosts;
+
     @Builder
-    public Movie(long id, String director, String title, String plot, LocalDate releaseDate) {
+    public Movie(long id, String director, String title, String plot, LocalDate releaseDate
+    , List<Review> movieReviews, List<Post> moviePosts) {
         this.id = id;
         this.director = director;
         this.title = title;
         this.plot = plot;
         this.releaseDate = releaseDate;
+        this.movieReviews = movieReviews;
+        this.moviePosts = moviePosts;
     }
 
 }
