@@ -46,7 +46,6 @@ public class Review {
     private Movie movie;
 
     @ManyToOne
-    @JsonIgnore
     private User user;
 
     @Builder
