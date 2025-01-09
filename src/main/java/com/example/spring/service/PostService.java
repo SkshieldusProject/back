@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -39,4 +41,17 @@ public class PostService {
                         .movie(postDto.getMovie())
                         .build());
         }
+
+    public PostDto getOnePost(Long id) {
+        Optional<Post> oPost = postRepository.findById(id);
+        if(oPost.isPresent()) {
+            Post post = oPost.get();
+            return PostDto.fromEntity(post);
+        }
+        throw new NoSuchElementException("User not found with postId: " + id);
+    }
+
+    public void deletePost(PostDto postDto) {
+        postRepository.delete(postDto.toEntity());
+    }
 }
