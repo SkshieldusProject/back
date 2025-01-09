@@ -43,6 +43,7 @@ public class MypageController {
         // 리뷰 목록 조회
         List<ReviewDto> userReviews = userService.getUserReviews(requestedUser);
 
+
         // 결과 반환
         return ResponseEntity.ok(Map.of(
                 "reviews", userReviews
