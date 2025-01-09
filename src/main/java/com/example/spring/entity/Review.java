@@ -59,7 +59,4 @@ public class Review {
         this.movie = movie;
         this.user = user;
     }
-
-
-
 }

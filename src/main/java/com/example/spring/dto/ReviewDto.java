@@ -40,6 +40,7 @@ public class ReviewDto {
                 .build();
     }
 
+
     // 엔티티 변환 메서드: DTO -> 엔티티
     public Review toEntity() {
         return Review.builder()

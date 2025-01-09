@@ -2,6 +2,7 @@ package com.example.spring.controller;
 
 import com.example.spring.dto.MovieDto;
 import com.example.spring.service.PosterService;
+import com.example.spring.service.ReviewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,14 +36,29 @@ public class PosterController {
         }
     }
 
-    // 특정 영화 조회
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPosterById(@PathVariable long id) {
+    public ResponseEntity<?> getMovieDetails(@PathVariable Long id) {
         try {
-            MovieDto posterUrl = posterService.getPosterPathById(id); // DTO 반환
-            return ResponseEntity.ok(posterUrl);
+            MovieDto movieDetails = posterService.getPosterPathById(id);
+            return ResponseEntity.ok(movieDetails);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body("Poster not found with ID: " + id);
+            return ResponseEntity.status(404).body("Movie not found with ID: " + id);
+        }
+    }
+
+    @RequestMapping("/api/reviews")
+    public class ReviewController {
+        private final ReviewService reviewService;
+
+        public ReviewController(ReviewService reviewService) {
+            this.reviewService = reviewService;
+        }
+
+        @GetMapping("/{movieId}/average-score")
+        public ResponseEntity<?> getAverageScore(@PathVariable Long score) {
+            double averageScore = posterService.calculateAverageScore(Float.valueOf(score));
+            return ResponseEntity.ok(averageScore);
         }
     }
 }
+

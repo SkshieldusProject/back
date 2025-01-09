@@ -1,8 +1,10 @@
 package com.example.spring.service;
 
 import com.example.spring.dto.MovieDto;
+import com.example.spring.dto.ReviewDto;
 import com.example.spring.entity.Movie;
 import com.example.spring.repository.PosterRepository;
+import com.example.spring.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,15 +12,18 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
 @Service
 public class PosterService {
     private final PosterRepository posterRepository;
+    private final ReviewRepository reviewRepository;
     private Movie movie;
 
-    public PosterService(PosterRepository posterRepository) {
+    public PosterService(PosterRepository posterRepository, ReviewRepository reviewRepository) {
         this.posterRepository = posterRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     // 모든 영화 조회
@@ -92,4 +97,13 @@ public class PosterService {
         // 엔티티 → DTO 변환 후 반환
         return convertToDto(movie);
     }
+
+    // 평점 평균 계산 메서드
+    public double calculateAverageScore(Float score) {
+        // DTO의 getScore() 호출
+        OptionalDouble average = OptionalDouble.of(score.floatValue());
+
+        return average.orElse(0.0);
+    }
+
 }
