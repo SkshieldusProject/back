@@ -45,4 +45,16 @@ public class MovieDto {
                 .build();
     }
 
+    public static MovieDto fromEntity(Movie movie) {
+        return MovieDto.builder()
+                .id(movie.getId())
+                .director(movie.getDirector())
+                .title(movie.getTitle())
+                .plot(movie.getPlot())
+                .releaseDate(movie.getReleaseDate())
+                .movieReviews(movie.getMovieReviews())
+                .moviePosts(movie.getMoviePosts())
+                .build();
+    }
+
 }

@@ -37,4 +37,15 @@ public class PostDto {
                 .createDate(createDate)
                 .build();
     }
+
+    public static PostDto fromEntity(Post post) {
+        return PostDto.builder()
+                .id(post.getId())
+                .content(post.getContent())
+                .subject(post.getSubject())
+                .user(post.getUser())
+                .movie(post.getMovie())
+                .createDate(post.getCreateDate())
+                .build();
+    }
 }

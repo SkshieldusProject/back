@@ -1,6 +1,7 @@
 package com.example.spring.dto;
 
 
+import com.example.spring.entity.Post;
 import com.example.spring.entity.Review;
 import com.example.spring.entity.User;
 import jakarta.persistence.Column;
@@ -33,6 +34,8 @@ public class UserDto {
 
     private List<Review> reviews;
 
+    private List<Post> userPosts;
+
     public User toEntity() {
         return User.builder()
                 .id(this.id)
@@ -42,6 +45,7 @@ public class UserDto {
                 .phoneNumber(this.phoneNumber)
                 .registerDate(this.registerDate)
                 .reviews(this.reviews)
+                .userPosts(this.userPosts)
                 .build();
     }
 }

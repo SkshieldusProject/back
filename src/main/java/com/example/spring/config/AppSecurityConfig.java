@@ -62,7 +62,7 @@ public class AppSecurityConfig {
                 .authorizeRequests()
                     // 아래 페이지는 인증 필요 x
                     .requestMatchers("/login", "/user/signup_process",
-                     "/user/findId", "/mypage/**", "/main").permitAll() //허가
+                     "/user/findId", "/mypage/**", "/main/**").permitAll() //허가
                     .anyRequest().authenticated() // 나머지는 안됨
                 .and()
                 // 2. 로그인 페이지(커스텀), 로그인 성공 후 포워딩 페이지등 지정
