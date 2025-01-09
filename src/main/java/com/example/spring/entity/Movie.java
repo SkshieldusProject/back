@@ -19,6 +19,7 @@ public class Movie {
     @Column(length = 50, nullable = false)
     private String director;
 
+    // 유니크 처리 안함
     @Column(length = 50, nullable = false)
     private String title;
 
