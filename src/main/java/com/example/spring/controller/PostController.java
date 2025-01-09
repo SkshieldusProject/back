@@ -93,9 +93,77 @@ public class PostController {
         }
     }
 
+    // 영화 리뷰 게시글 작성
+    // 로그인 해야 작성 가능
+    @PostMapping("/post/create")
+    public ResponseEntity<?> createPost(@RequestParam String subject, @RequestParam String content,
+                                        @RequestParam String movieTitle, Authentication authentication) {
+        try {
+            // 작성자 정보 가져오기
+            String currentUser = authentication.getName();
+            UserDto userDto = userService.getOneUser(currentUser);
+
+            // 영화 정보 가져오기
+            MovieDto movieDto = movieService.getOneMovie(movieTitle);
+            postService.create(PostDto.builder()
+                    .subject(subject)
+                    .content(content)
+                    .createDate(LocalDateTime.now())
+                    .user(userDto.toEntity())
+                    .movie(movieDto.toEntity())
+                    .build()
+            );
+            return ResponseEntity.ok("post created!!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+    // 게시글 수정하기
+    @GetMapping("/posts/modify/{id}")
+    public ResponseEntity<?> modifyPost(@PathVariable Long id, Authentication authentication) {
+        String authenticationUserId = authentication.getName();
+
+        PostDto postDto = postService.getOnePost(id);
+
+        if(!postDto.getUser().getUsername().equals(authenticationUserId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("수정 권한이 없습니다.");
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "post", postDto
+        ));
+    }
+    @PutMapping("/posts/modify/{id}")
+    public ResponseEntity<?> modifyPost(@PathVariable Long id, Authentication authentication,
+                                        @RequestParam String subject, @RequestParam String content, @RequestParam String movieTitle) {
+        try {
+            String authenticationUserId = authentication.getName();
+
+            PostDto postDto = postService.getOnePost(id);
+
+            if (!postDto.getUser().getUsername().equals(authenticationUserId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("수정 권한이 없습니다.");
+            }
+
+            MovieDto movieDto = movieService.getOneMovie(movieTitle);
+            postDto.setSubject(subject);
+            postDto.setContent(content);
+            postDto.setMovie(movieDto.toEntity());
+
+            postService.modify(postDto);
+            return ResponseEntity.ok("post modified!!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+
+    }
+
     // 영화 리뷰 삭제하기
     // 작성한 사용자만 삭제할 수 있음
-    @DeleteMapping("/main/posts/delete/{id}")
+    @DeleteMapping("/posts/delete/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id, Authentication authentication) {
         String authenticationUserId = authentication.getName();
 
@@ -107,32 +175,5 @@ public class PostController {
 
         postService.deletePost(postDto);
         return ResponseEntity.ok("게시글이 삭제되었습니다.");
-    }
-
-    // 영화 리뷰 게시글 작성
-    // 로그인 해야 작성 가능
-    @PostMapping("/post/create")
-    public ResponseEntity<?> createPost(@RequestParam String title, @RequestParam String content,
-                                        @RequestParam String movieTitle, Authentication authentication) {
-        try {
-            // 작성자 정보 가져오기
-            String currentUser = authentication.getName();
-            UserDto userDto = userService.getOneUser(currentUser);
-
-            // 영화 정보 가져오기
-            MovieDto movieDto = movieService.getOneMovie(movieTitle);
-            postService.create(PostDto.builder()
-                    .subject(title)
-                    .content(content)
-                    .createDate(LocalDateTime.now())
-                    .user(userDto.toEntity())
-                    .movie(movieDto.toEntity())
-                    .build()
-            );
-            return ResponseEntity.ok("post created!!");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-
     }
 }
