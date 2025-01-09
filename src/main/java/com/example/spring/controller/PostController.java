@@ -35,7 +35,30 @@ public class PostController {
         ));
     }
 
-    //@GetMapping("/main/movies")
+
+    // 리턴 방식
+    // month : 현재 상영중인 영화 평점 순으로 객체 배열
+    // all : 전체 영화 평점 순으로 객체 배열
+    @GetMapping("/main/movies")
+    public ResponseEntity<?> recommendedMovies() {
+        try{
+            System.out.println("영화 평점" + movieService.getMovieScore(1L));
+            // 지금 달 중에서 평점 높은 영화 나열
+            int year = LocalDate.now().getYear();
+            int month = LocalDate.now().getMonthValue();
+            List<MovieDto> monthMovies = movieService.getMonthRecommendedMovies(year, month);
+            // 전체 영화 중에서 평점 높은 영화 나열
+            List<MovieDto> bestMovies = movieService.getRecommendedMovies();
+            return ResponseEntity.ok(Map.of(
+                    "month", monthMovies,
+                    "all", bestMovies
+            ));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+    }
 
     @PostMapping("/post/create")
     public ResponseEntity<?> createPost(@RequestParam String title, @RequestParam String content,
