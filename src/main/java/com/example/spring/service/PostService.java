@@ -1,15 +1,15 @@
 package com.example.spring.service;
 
 import com.example.spring.dto.PostDto;
+import com.example.spring.dto.UserDto;
 import com.example.spring.entity.Post;
+import com.example.spring.entity.Review;
 import com.example.spring.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -50,6 +50,17 @@ public class PostService {
         }
         throw new NoSuchElementException("User not found with postId: " + id);
     }
+// 추가
+    public List<PostDto> getPostsByUser(UserDto user) {
+        List<Post> posts = postRepository.findByUserId(user.getId());
+        if (posts == null || posts.isEmpty()) {
+            return Collections.emptyList(); // 빈 리스트 반환
+        }
+        return posts.stream()
+                .map(PostDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
 
     public void deletePost(PostDto postDto) {
         postRepository.delete(postDto.toEntity());
