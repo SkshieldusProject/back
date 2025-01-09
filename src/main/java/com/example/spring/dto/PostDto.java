@@ -3,7 +3,6 @@ package com.example.spring.dto;
 import com.example.spring.entity.Movie;
 import com.example.spring.entity.Post;
 import com.example.spring.entity.User;
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 public class PostDto {
-    private int id;
+    private long id;
 
     private String subject;
 
@@ -30,6 +29,7 @@ public class PostDto {
 
     public Post toEntity() {
         return Post.builder()
+                .id(id)
                 .content(content)
                 .subject(subject)
                 .user(user)

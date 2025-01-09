@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @Column(length = 256)
     private String subject;
@@ -34,7 +34,8 @@ public class Post {
     private Movie movie;
 
     @Builder
-    public Post(String subject, String content, LocalDateTime createDate, User user, Movie movie) {
+    public Post(long id, String subject, String content, LocalDateTime createDate, User user, Movie movie) {
+        this.id = id;
         this.subject = subject;
         this.content = content;
         this.createDate = createDate;
