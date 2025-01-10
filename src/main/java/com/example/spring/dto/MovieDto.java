@@ -33,6 +33,9 @@ public class MovieDto {
 
     private List<Post> moviePosts;
 
+    // 포스터 이미지 경로 또는 URL
+    private String posterPath;
+
     public Movie toEntity() {
         return Movie.builder()
                 .id(id)
