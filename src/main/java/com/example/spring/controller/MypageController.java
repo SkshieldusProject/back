@@ -1,10 +1,12 @@
 package com.example.spring.controller;
 
 
+import com.example.spring.dto.MovieDto;
 import com.example.spring.dto.PostDto;
 import com.example.spring.dto.ReviewDto;
 import com.example.spring.dto.UserDto;
 import com.example.spring.entity.Review;
+import com.example.spring.service.MovieService;
 import com.example.spring.service.PostService;
 import com.example.spring.service.ReviewService;
 import com.example.spring.service.UserService;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 @RestController
@@ -23,11 +26,13 @@ public class MypageController {
     private final UserService userService;
     private final ReviewService reviewService;
     private final PostService postService;
+    private final MovieService movieService;
 
     public MypageController(UserService userService, ReviewService reviewService, PostService postService) {
         this.userService = userService;
         this.reviewService = reviewService;
         this.postService = postService;
+        this.movieService = new MovieService();
     }
     // 마이페이지 조회
     @GetMapping("/uid/{userId}")
@@ -116,5 +121,29 @@ public class MypageController {
         // 리뷰 삭제
         reviewService.deleteReview(reviewId);
         return ResponseEntity.ok("리뷰가 삭제되었습니다.");
+    }
+
+    @PostMapping("/reviews/{movieId}/create")
+    public ResponseEntity<?> createReview(@PathVariable long movieId , @RequestParam float score, @RequestParam String content,
+                                          Authentication authentication) {
+        try{
+            String currentUser = authentication.getName();
+            UserDto userDto = userService.getOneUser(currentUser);
+
+            MovieDto movieDto = movieService.getOneMovieById(movieId);
+            ReviewDto reviewDto = ReviewDto.builder()
+                    .score(score)
+                    .subject("사용안함")
+                    .content(content)
+                    .createDate(LocalDateTime.now())
+                    .movie(movieDto.toEntity())
+                    .user(userDto.toEntity())
+                    .build();
+            reviewService.createReview(reviewDto.toEntity());
+            return ResponseEntity.ok("review created!!");
+
+        } catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

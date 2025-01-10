@@ -71,32 +71,4 @@ public class PosterController {
             return ResponseEntity.ok(averageScore);
         }
     }
-
-
-    @PostMapping("/reviews/{movieId}/create")
-    public ResponseEntity<?> createReview(@PathVariable long movieId , @RequestParam float score, @RequestParam String content,
-                                          Authentication authentication) {
-        try{
-            String currentUser = authentication.getName();
-            UserDto userDto = userService.getOneUser(currentUser);
-
-            MovieDto movieDto = movieService.getOneMovieById(movieId);
-            ReviewDto reviewDto = ReviewDto.builder()
-                    .score(score)
-                    .subject("사용안함")
-                    .content(content)
-                    .createDate(LocalDateTime.now())
-                    .movie(movieDto.toEntity())
-                    .user(userDto.toEntity())
-                    .build();
-            reviewService.createReview(reviewDto.toEntity());
-            return ResponseEntity.ok("review created!!");
-
-        } catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-
 }
-
