@@ -95,4 +95,13 @@ public class MovieService {
         }
         return null;
     }
+
+    public List<MovieDto> getSearchMovies(String keyword) {
+        List<Movie> movies = movieRepository.findByKeyword(keyword);
+        List<MovieDto> movieDtos = new ArrayList<>();
+        for(Movie movie : movies) {
+
+        }
+        return null;
+    }
 }
