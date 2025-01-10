@@ -47,12 +47,13 @@ public class PosterController {
 
 
     @GetMapping("/detail/{id}")
-    public ResponseEntity<?> getMovieDetails(@PathVariable Long id) {
+    public ResponseEntity<?> getMovieDetails(@PathVariable long id) {
         try {
             MovieDto movieDetails = movieService.getOneMovieById(id);
 
             return ResponseEntity.ok( Map.of(
-                    "movie", movieDetails
+                    "movie", movieDetails,
+                    "reviews", movieDetails.getMovieReviews()
             ));
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body("Movie not found with ID: " + id);

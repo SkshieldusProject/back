@@ -57,8 +57,6 @@ public class MovieDto {
                 .releaseDate(movie.getReleaseDate())
                 .genres(movie.getGenres())
                 .actors(movie.getActors())
-                .movieReviews(movie.getMovieReviews())
-                .moviePosts(movie.getMoviePosts())
                 .build();
     }
 
