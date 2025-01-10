@@ -34,4 +34,13 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     @Query("SELECT COALESCE(AVG(r.score), 0.0) FROM Review r WHERE r.movie.id = :movieId")
     float findScoreByid(@Param("movieId") long id);
+
+    @Query("SELECT DISTINCT m FROM Movie m " +
+            "LEFT JOIN m.actors a " +
+            "LEFT JOIN m.genres g " +
+            "WHERE LOWER(m.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(m.director) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(a.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(g.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<Movie> findByKeyword(String keyword);
 }

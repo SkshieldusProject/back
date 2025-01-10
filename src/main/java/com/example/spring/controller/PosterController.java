@@ -72,9 +72,11 @@ public class PosterController {
             return ResponseEntity.ok(averageScore);
         }
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchMovies(@RequestParam("keyword") String keyword) {
+        List<MovieDto> movieDtos = movieService.getSearchMovies(keyword);
+
+        return ResponseEntity.ok(Map.of("movies", movieDtos));
+    }
 }
-
-
-/**
-
- */
