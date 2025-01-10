@@ -28,11 +28,11 @@ public class MypageController {
     private final PostService postService;
     private final MovieService movieService;
 
-    public MypageController(UserService userService, ReviewService reviewService, PostService postService) {
+    public MypageController(UserService userService, ReviewService reviewService, PostService postService, MovieService movieService) {
         this.userService = userService;
         this.reviewService = reviewService;
         this.postService = postService;
-        this.movieService = new MovieService();
+        this.movieService = movieService;
     }
     // 마이페이지 조회
     @GetMapping("/uid/{userId}")
