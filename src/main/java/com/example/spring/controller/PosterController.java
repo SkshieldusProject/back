@@ -1,11 +1,13 @@
 package com.example.spring.controller;
 
-import com.example.spring.entity.Poster;
+import com.example.spring.dto.MovieDto;
 import com.example.spring.service.PosterService;
+import com.example.spring.service.ReviewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 @RestController
@@ -19,45 +21,44 @@ public class PosterController {
 
     // 영화 등록 및 포스터 업로드
     @PostMapping
-    public ResponseEntity<?> addPoster(
+    public ResponseEntity<?> addPosterPath(
             @RequestParam("title") String title,
             @RequestParam("director") String director,
             @RequestParam("genre") String genre,
             @RequestParam("releaseDate") LocalDate releaseDate,
-            @RequestParam(value = "image", required = false) MultipartFile image) {
+            @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
         try {
-            // 이미지 저장
-            String imagePath = null;
-            if (image != null && !image.isEmpty()) {
-                imagePath = posterService.savePosterFile(image);
-            }
-
-            // Poster 객체 생성
-            Poster poster = Poster.builder()
-                    .title(title)
-                    .director(director)
-                    .genre(genre)
-                    .releaseDate(releaseDate)
-                    .posterPath(imagePath) // 저장된 이미지 경로
-                    .build();
-
-            // Poster 저장
-            Poster savedPoster = posterService.savePoster(poster);
-            return ResponseEntity.ok(savedPoster);
+            // 요청 데이터를 서비스로 전달
+            MovieDto savedMovie = posterService.addMovieWithPoster(title, director, genre, releaseDate, image);
+            return ResponseEntity.ok(savedMovie);
         } catch (Exception e) {
-            e.printStackTrace(); // 디버깅을 위한 로그 출력
-            return ResponseEntity.status(500).body("Error saving poster: " + e.getMessage());
+            return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
         }
     }
 
-    // 특정 영화 조회
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPosterById(@PathVariable Long id) {
+    public ResponseEntity<?> getMovieDetails(@PathVariable Long id) {
         try {
-            Poster poster = posterService.getPosterById(id);
-            return ResponseEntity.ok(poster);
+            MovieDto movieDetails = posterService.getPosterPathById(id);
+            return ResponseEntity.ok(movieDetails);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body("Poster not found with ID: " + id);
+            return ResponseEntity.status(404).body("Movie not found with ID: " + id);
+        }
+    }
+
+    @RequestMapping("/api/reviews")
+    public class ReviewController {
+        private final ReviewService reviewService;
+
+        public ReviewController(ReviewService reviewService) {
+            this.reviewService = reviewService;
+        }
+
+        @GetMapping("/{movieId}/average-score")
+        public ResponseEntity<?> getAverageScore(@PathVariable Long score) {
+            double averageScore = posterService.calculateAverageScore(Float.valueOf(score));
+            return ResponseEntity.ok(averageScore);
         }
     }
 }
+

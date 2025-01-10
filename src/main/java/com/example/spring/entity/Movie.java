@@ -29,6 +29,8 @@ public class Movie {
     @Column(nullable = false)
     private LocalDate releaseDate;
 
+    private String posterPath;
+
     @ManyToMany
     @JoinTable(
             name = "movieactor",
