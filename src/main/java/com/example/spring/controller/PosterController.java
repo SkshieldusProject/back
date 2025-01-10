@@ -1,23 +1,32 @@
 package com.example.spring.controller;
 
 import com.example.spring.dto.MovieDto;
+import com.example.spring.dto.ReviewDto;
+import com.example.spring.dto.UserDto;
+import com.example.spring.entity.Movie;
+import com.example.spring.service.MovieService;
 import com.example.spring.service.PosterService;
 import com.example.spring.service.ReviewService;
+import com.example.spring.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/movie/posters")
+@RequestMapping("/movies")
+@RequiredArgsConstructor
 public class PosterController {
     private final PosterService posterService;
-
-    public PosterController(PosterService posterService) {
-        this.posterService = posterService;
-    }
+    private final MovieService movieService;
+    private final ReviewService reviewService;
+    private final UserService userService;
 
     // 영화 등록 및 포스터 업로드
     @PostMapping
@@ -36,10 +45,12 @@ public class PosterController {
         }
     }
 
-    @GetMapping("/{id}")
+
+    @GetMapping("/detail/{id}")
     public ResponseEntity<?> getMovieDetails(@PathVariable Long id) {
         try {
             MovieDto movieDetails = posterService.getPosterPathById(id);
+
             return ResponseEntity.ok(movieDetails);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body("Movie not found with ID: " + id);
@@ -60,5 +71,32 @@ public class PosterController {
             return ResponseEntity.ok(averageScore);
         }
     }
+
+
+    @PostMapping("/reviews/{movieId}/create")
+    public ResponseEntity<?> createReview(@PathVariable long movieId , @RequestParam float score, @RequestParam String content,
+                                          Authentication authentication) {
+        try{
+            String currentUser = authentication.getName();
+            UserDto userDto = userService.getOneUser(currentUser);
+
+            MovieDto movieDto = movieService.getOneMovieById(movieId);
+            ReviewDto reviewDto = ReviewDto.builder()
+                    .score(score)
+                    .subject("사용안함")
+                    .content(content)
+                    .createDate(LocalDateTime.now())
+                    .movie(movieDto.toEntity())
+                    .user(userDto.toEntity())
+                    .build();
+            reviewService.createReview(reviewDto.toEntity());
+            return ResponseEntity.ok("review created!!");
+
+        } catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
 }
 

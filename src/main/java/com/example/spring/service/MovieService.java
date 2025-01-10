@@ -66,4 +66,11 @@ public class MovieService {
     public float getMovieScore(long id) {
         return movieRepository.findScoreByid(id);
     }
+
+    public MovieDto getOneMovieById(long movieId) {
+        Optional<Movie> oMovie = movieRepository.findById(movieId);
+        Movie movie = oMovie.orElse(null);
+        // 필요한 값만 추가해서 리턴
+        return MovieDto.fromEntity(movie);
+    }
 }
