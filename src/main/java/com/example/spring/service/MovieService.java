@@ -1,7 +1,9 @@
 package com.example.spring.service;
 
 import com.example.spring.dto.MovieDto;
+import com.example.spring.dto.ReviewDto;
 import com.example.spring.entity.Movie;
+import com.example.spring.entity.Review;
 import com.example.spring.repository.MovieRepository;
 import com.example.spring.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -70,7 +73,26 @@ public class MovieService {
     public MovieDto getOneMovieById(long movieId) {
         Optional<Movie> oMovie = movieRepository.findById(movieId);
         Movie movie = oMovie.orElse(null);
-        // 필요한 값만 추가해서 리턴
-        return MovieDto.fromEntity(movie);
+        MovieDto movieDto = MovieDto.fromEntity(movie);
+        return movieDto;
+    }
+
+    public Map<String, Object> getOneMovieReviews(long movieId) {
+        Optional<Movie> oMovie = movieRepository.findById(movieId);
+        if(oMovie.isPresent()) {
+            float score = movieRepository.findScoreByid(movieId);
+            Movie movie = oMovie.get();
+            MovieDto movieDto = MovieDto.fromEntity(movie);
+            List<Review> reviews = movie.getMovieReviews();
+            List<ReviewDto> reviewDtos = new ArrayList<>();
+            for(Review review : reviews) {
+                reviewDtos.add(ReviewDto.fromEntity(review));
+            }
+            movieDto.setMoviePosts(null);
+            movieDto.setMovieReviews(null);
+            return Map.of("movie", movieDto, "reviews", reviewDtos, "score", score);
+
+        }
+        return null;
     }
 }

@@ -4,6 +4,7 @@ import com.example.spring.dto.MovieDto;
 import com.example.spring.dto.ReviewDto;
 import com.example.spring.dto.UserDto;
 import com.example.spring.entity.Movie;
+import com.example.spring.entity.Review;
 import com.example.spring.service.MovieService;
 import com.example.spring.service.PosterService;
 import com.example.spring.service.ReviewService;
@@ -17,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -49,12 +52,7 @@ public class PosterController {
     @GetMapping("/detail/{id}")
     public ResponseEntity<?> getMovieDetails(@PathVariable long id) {
         try {
-            MovieDto movieDetails = movieService.getOneMovieById(id);
-
-            return ResponseEntity.ok( Map.of(
-                    "movie", movieDetails,
-                    "reviews", movieDetails.getMovieReviews()
-            ));
+            return ResponseEntity.ok(movieService.getOneMovieReviews(id));
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body("Movie not found with ID: " + id);
         }

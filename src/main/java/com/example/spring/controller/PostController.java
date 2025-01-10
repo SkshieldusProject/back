@@ -32,6 +32,10 @@ public class PostController {
         int year = LocalDate.now().getYear();
         int month = LocalDate.now().getMonthValue();
         List<MovieDto> movies = movieService.getMonthRecommendedMovies(year, month);
+        for(MovieDto movie : movies) {
+            movie.setMoviePosts(null);
+            movie.setMovieReviews(null);
+        }
 
         List<PostDto> posts = postService.getRecentPosts();
 
@@ -57,7 +61,15 @@ public class PostController {
             int month = LocalDate.now().getMonthValue();
             List<MovieDto> monthMovies = movieService.getMonthRecommendedMovies(year, month);
             // 전체 영화 중에서 평점 높은 영화 나열
+            for(MovieDto movie : monthMovies) {
+                movie.setMoviePosts(null);
+                movie.setMovieReviews(null);
+            }
             List<MovieDto> bestMovies = movieService.getRecommendedMovies();
+            for(MovieDto movie : bestMovies) {
+                movie.setMoviePosts(null);
+                movie.setMovieReviews(null);
+            }
             return ResponseEntity.ok(Map.of(
                     "month", monthMovies,
                     "all", bestMovies

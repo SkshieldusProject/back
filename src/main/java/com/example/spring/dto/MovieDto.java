@@ -57,6 +57,10 @@ public class MovieDto {
                 .releaseDate(movie.getReleaseDate())
                 .genres(movie.getGenres())
                 .actors(movie.getActors())
+                // 이거 두개는 왠만하면 반환 x
+                .movieReviews(movie.getMovieReviews())
+                .moviePosts(movie.getMoviePosts())
+
                 .build();
     }
 
