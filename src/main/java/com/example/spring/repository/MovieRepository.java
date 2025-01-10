@@ -18,17 +18,18 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     Optional<Movie> findFirstByTitle(String movieTitle);
 
     @Query( "SELECT m " +
-            "FROM Movie m JOIN m.movieReviews r " +
+            "FROM Movie m LEFT JOIN m.movieReviews r " +
             "GROUP BY m " +
-            "ORDER BY AVG(r.score) DESC")
+            "ORDER BY COALESCE(AVG(r.score), 0) DESC")
     List<Movie> findByRecommended();
 
 
     // 쿼리문 아래로 내릴려면 "" + "" 로 해줘야 함
     @Query( "SELECT m " +
-            "FROM Movie m JOIN m.movieReviews r " +
-            "WHERE  FUNCTION('YEAR', m.releaseDate) = :year AND FUNCTION('MONTH', m.releaseDate) = :month " +
-            "GROUP BY m ORDER BY AVG(r.score) DESC")
+            "FROM Movie m LEFT JOIN m.movieReviews r " +
+            "WHERE FUNCTION('YEAR', m.releaseDate) = :year AND FUNCTION('MONTH', m.releaseDate) = :month " +
+            "GROUP BY m " +
+            "ORDER BY COALESCE(AVG(r.score), 0) DESC")
     List<Movie> findByMonthlyRecommended(@Param("year") int year, @Param("month") int month);
 
     @Query("SELECT COALESCE(AVG(r.score), 0.0) FROM Review r WHERE r.movie.id = :movieId")
