@@ -100,8 +100,11 @@ public class MovieService {
         List<Movie> movies = movieRepository.findByKeyword(keyword);
         List<MovieDto> movieDtos = new ArrayList<>();
         for(Movie movie : movies) {
-
+            MovieDto movieDto = MovieDto.fromEntity(movie);
+            movieDto.setMoviePosts(null);
+            movieDto.setMovieReviews(null);
+            movieDtos.add(movieDto);
         }
-        return null;
+        return movieDtos;
     }
 }
