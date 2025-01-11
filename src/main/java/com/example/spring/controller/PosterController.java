@@ -18,8 +18,6 @@ import java.util.Map;
 public class PosterController {
     private final PosterService posterService;
     private final MovieService movieService;
-    private final ReviewService reviewService;
-    private final UserService userService;
 
     @GetMapping("/")
     public ResponseEntity<?> getAllMovies() {
