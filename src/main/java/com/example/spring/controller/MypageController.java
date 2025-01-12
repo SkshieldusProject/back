@@ -29,7 +29,7 @@ public class MypageController {
     private final ReviewService reviewService;
     private final PostService postService;
     private final MovieService movieService;
-    
+
 
     //내가 작성한 게시글 조회
     @GetMapping("/uid/mypost")
@@ -75,20 +75,23 @@ public class MypageController {
 
     // 리뷰 수정
     @PutMapping("/reviews/{reviewId}")
-    public ResponseEntity<?> updateReview(@PathVariable Long reviewId, @RequestBody ReviewDto reviewDto, Authentication authentication) {
+    public ResponseEntity<?> updateReview(@PathVariable Long reviewId, @RequestParam float score, @RequestParam String content,
+                                          Authentication authentication) {
         String authenticatedUserId = authentication.getName();
 
         // 수정하려는 리뷰 확인
         ReviewDto existingReview = reviewService.findReviewById(reviewId);
 
         // 권한 확인
-        if (existingReview.getUser().getId() != Long.parseLong(authenticatedUserId)) {
+        if (!authenticatedUserId.equals(existingReview.getUser().getUserId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("수정 권한이 없습니다.");
         }
 
+        existingReview.setScore(score);
+        existingReview.setContent(content);
         // 리뷰 수정
-        Review updatedReview = reviewService.updateReview(reviewId, reviewDto.toEntity());
-        return ResponseEntity.ok(ReviewDto.fromEntity(updatedReview));
+        reviewService.updateReview(existingReview.toEntity());
+        return ResponseEntity.ok("Review Modify Success");
     }
 
 
