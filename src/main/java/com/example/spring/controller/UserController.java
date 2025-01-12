@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @PostMapping("/modify")
-    public ResponseEntity<String> modify(@RequestParam String phoneNumber) {
+    public ResponseEntity<String> modify(@RequestParam String phoneNumber, @RequestParam String password) {
         logger.info(phoneNumber);
         //logger.info("아이디는"+id);
         try{
@@ -68,6 +68,7 @@ public class UserController {
             UserDto userDto = userService.getOneUser(userId);
             System.out.println("모디파이에서 가져온 dto "+ userDto.toString());
             userDto.setPhoneNumber(phoneNumber);
+            userDto.setPassword(password);
             userService.modify(userDto);
             return ResponseEntity.ok("Modify successful");
 

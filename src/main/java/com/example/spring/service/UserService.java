@@ -66,6 +66,7 @@ public class UserService {
 
     public void modify(UserDto userDto) {
         System.out.println("서비스 " + userDto.toString());
+        userDto.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
         userRepository.save(userDto.toEntity());
     }
 
