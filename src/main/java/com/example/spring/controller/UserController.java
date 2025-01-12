@@ -99,4 +99,16 @@ public class UserController {
         }
     }
 
+    @GetMapping("/nowData")
+    public ResponseEntity<?> nowData(Authentication authentication) {
+        try{
+            String userId = authentication.getName();
+            UserDto userDto = userService.getOneUser(userId);
+            return ResponseEntity.ok(Map.of("user", userDto));
+        }
+        catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
 }
