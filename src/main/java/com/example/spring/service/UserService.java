@@ -55,15 +55,10 @@ public class UserService {
         if(!users.isEmpty()) {
             List<UserDto> userDtos = new ArrayList<>();
             for(User user : users) {
-                userDtos.add( UserDto.builder()
-                        .id(user.getId())
-                        .userId(user.getUserId())
-                        .password(user.getPassword())
-                        .email(user.getEmail())
-                        .phoneNumber(user.getPhoneNumber())
-                        .registerDate(user.getRegisterDate())
-                        .reviews(user.getReviews())
-                        .build());
+                UserDto temp = UserDto.fromEntity(user);
+                temp.setReviews(null);
+                temp.setUserPosts(null);
+                userDtos.add(temp);
             }
             return userDtos;
         }
