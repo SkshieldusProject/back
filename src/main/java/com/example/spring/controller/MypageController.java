@@ -55,9 +55,10 @@ public class MypageController {
         ));
     }
 
-    //게시글 조회
-    @GetMapping("/uid/{userId}/mypost")
-    public ResponseEntity<?> getMyPost(@PathVariable String userId) {
+    //내가 작성한 게시글 조회
+    @GetMapping("/uid/mypost")
+    public ResponseEntity<?> getMyPost(Authentication authentication) {
+        String userId = authentication.getName();
         UserDto requestedUser = userService.getOneUser(userId);
         if (requestedUser == null) {
             // 사용자 존재하지 않음
@@ -87,7 +88,7 @@ public class MypageController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ReviewDto.fromEntity(createdReview));
     }
 
-    // 글 수정
+    // 리뷰 수정
     @PutMapping("/reviews/{reviewId}")
     public ResponseEntity<?> updateReview(@PathVariable Long reviewId, @RequestBody ReviewDto reviewDto, Authentication authentication) {
         String authenticatedUserId = authentication.getName();
@@ -106,7 +107,7 @@ public class MypageController {
     }
 
 
-    // 글 삭제
+    // 리뷰 삭제
     @DeleteMapping("/reviews/{reviewId}")
     public ResponseEntity<?> deleteReview(@PathVariable Long reviewId, Authentication authentication) {
         String authenticatedUserId = authentication.getName();
@@ -123,6 +124,8 @@ public class MypageController {
         return ResponseEntity.ok("리뷰가 삭제되었습니다.");
     }
 
+
+    // 리뷰 작성
     @PostMapping("/reviews/{movieId}/create")
     public ResponseEntity<?> createReview(@PathVariable long movieId , @RequestParam float score, @RequestParam String content,
                                           Authentication authentication) {
