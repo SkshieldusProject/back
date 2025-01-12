@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReviewService{
@@ -25,25 +26,30 @@ public class ReviewService{
         return reviewRepository.findByUserId(userId);
     }
 
-    public Review findReviewById(Long reviewId) {
-        return reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+    public ReviewDto findReviewById(Long reviewId) {
+        Optional<Review> oReview = reviewRepository.findById(reviewId);
+        if (oReview.isPresent()) {
+            return ReviewDto.fromEntity(oReview.get());
+        }
+        else {
+            throw  new IllegalArgumentException("리뷰를 찾을 수 없습니다.");
+        }
     }
 
-    public Review createReview(Review review) {
-        return reviewRepository.save(review);
+    public void createReview(Review review) {
+        reviewRepository.save(review);
     }
 
     public Review updateReview(Long reviewId, Review updatedReview) {
-        Review existingReview = findReviewById(reviewId);
+        ReviewDto existingReview = findReviewById(reviewId);
         existingReview.setScore(updatedReview.getScore());
         existingReview.setSubject(updatedReview.getSubject());
         existingReview.setContent(updatedReview.getContent());
-        return reviewRepository.save(existingReview);
+        return reviewRepository.save(existingReview.toEntity());
     }
 
     public void deleteReview(Long reviewId) {
-        Review existingReview = findReviewById(reviewId);
-        reviewRepository.delete(existingReview);
+        ReviewDto existingReview = findReviewById(reviewId);
+        reviewRepository.delete(existingReview.toEntity());
     }
 }
