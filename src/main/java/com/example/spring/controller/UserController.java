@@ -90,4 +90,16 @@ public class UserController {
 
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> delete(Authentication authentication) {
+        try{
+            String userId = authentication.getName();
+            UserDto userDto = userService.getOneUser(userId);
+            userService.deleteUser(userDto);
+            return ResponseEntity.ok("Delete successful");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
 }

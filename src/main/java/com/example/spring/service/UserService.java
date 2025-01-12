@@ -6,6 +6,10 @@ import com.example.spring.entity.Review;
 import com.example.spring.entity.User;
 import com.example.spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +26,9 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private SessionRegistry sessionRegistry;
+
     public void register(UserDto userDto) {
         System.out.println(userDto.toString());
         userRepository.save(User.builder()
@@ -37,15 +44,7 @@ public class UserService {
         Optional<User> oUser = userRepository.findByUserId(userId);
         if(oUser.isPresent()) {
             User user = oUser.get();
-            return UserDto.builder()
-                    .id(user.getId())
-                    .userId(user.getUserId())
-                    .password(user.getPassword())
-                    .email(user.getEmail())
-                    .phoneNumber(user.getPhoneNumber())
-                    .registerDate(user.getRegisterDate())
-                    .reviews(user.getReviews())
-                    .build();
+            return UserDto.fromEntity(user);
         }
         throw new NoSuchElementException("User not found with userId: " + userId);
     }
@@ -91,4 +90,25 @@ public class UserService {
 
     }
 
+    // 사용자 세션 무효화 함수
+    private void expireUserSessions(String username) {
+        sessionRegistry.getAllPrincipals().forEach(principal -> {
+            if (principal instanceof UserDetails) {
+                UserDetails userDetails = (UserDetails) principal;
+                if (userDetails.getUsername().equals(username)) {
+                    sessionRegistry.getAllSessions(userDetails, false).forEach(SessionInformation::expireNow);
+                }
+            }
+        });
+    }
+
+    public void deleteUser(UserDto userDto) {
+        // 세션 만료
+        expireUserSessions(userDto.getUserId());
+
+        userRepository.delete(userDto.toEntity());
+
+        // SecurityContext 초기화
+        SecurityContextHolder.clearContext();
+    }
 }
