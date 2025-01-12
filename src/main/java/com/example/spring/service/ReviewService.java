@@ -40,12 +40,8 @@ public class ReviewService{
         reviewRepository.save(review);
     }
 
-    public Review updateReview(Long reviewId, Review updatedReview) {
-        ReviewDto existingReview = findReviewById(reviewId);
-        existingReview.setScore(updatedReview.getScore());
-        existingReview.setSubject(updatedReview.getSubject());
-        existingReview.setContent(updatedReview.getContent());
-        return reviewRepository.save(existingReview.toEntity());
+    public void updateReview(Review updatedReview) {
+        reviewRepository.save(updatedReview);
     }
 
     public void deleteReview(Long reviewId) {
