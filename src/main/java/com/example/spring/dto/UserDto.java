@@ -48,4 +48,16 @@ public class UserDto {
                 .userPosts(this.userPosts)
                 .build();
     }
+    public static UserDto fromEntity(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .userId(user.getUserId())
+                .password(user.getPassword())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .registerDate(user.getRegisterDate())
+                .reviews(user.getReviews())
+                .userPosts(user.getUserPosts())
+                .build();
+    }
 }
