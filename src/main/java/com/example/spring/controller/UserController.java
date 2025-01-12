@@ -1,7 +1,6 @@
 package com.example.spring.controller;
 
 
-import com.example.spring.dto.ReviewDto;
 import com.example.spring.dto.UserDto;
 import com.example.spring.service.ReviewService;
 import com.example.spring.service.UserService;
@@ -9,11 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,9 +23,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
-    private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    private final ReviewService reviewService;
 
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -57,10 +52,10 @@ public class UserController {
         }
     }
 
-    @PostMapping("/modify")
+    // 개인정보 수정하기
+    @PutMapping("/modify")
     public ResponseEntity<String> modify(@RequestParam String phoneNumber, @RequestParam String password) {
         logger.info(phoneNumber);
-        //logger.info("아이디는"+id);
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String userId = authentication.getName();
@@ -77,7 +72,7 @@ public class UserController {
         }
     }
 
-
+    // 아이디 찾기
     @PostMapping("/findId")
     public ResponseEntity<?> findId(@RequestParam String email, @RequestParam String phoneNumber) {
         try{
@@ -91,6 +86,7 @@ public class UserController {
 
     }
 
+    // 아이디 삭제하기
     @DeleteMapping("/delete")
     public ResponseEntity<?> delete(Authentication authentication) {
         try{

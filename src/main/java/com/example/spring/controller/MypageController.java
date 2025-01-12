@@ -10,6 +10,7 @@ import com.example.spring.service.MovieService;
 import com.example.spring.service.PostService;
 import com.example.spring.service.ReviewService;
 import com.example.spring.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,39 +22,14 @@ import java.util.List;
 import java.util.Map;
 @RestController
 @RequestMapping("/mypage")
+@RequiredArgsConstructor
 public class MypageController {
 
     private final UserService userService;
     private final ReviewService reviewService;
     private final PostService postService;
     private final MovieService movieService;
-
-    public MypageController(UserService userService, ReviewService reviewService, PostService postService, MovieService movieService) {
-        this.userService = userService;
-        this.reviewService = reviewService;
-        this.postService = postService;
-        this.movieService = movieService;
-    }
-    // 마이페이지 조회
-    @GetMapping("/uid/{userId}")
-    public ResponseEntity<?> getMyPage(@PathVariable String userId) {
-        System.out.println("유저id로 검색 : "+ userId);
-        UserDto requestedUser = userService.getOneUser(userId);
-        System.out.println("유저DTO 할당");
-        if (requestedUser == null) {
-            System.out.println("사용자 못 찾음");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
-        }
-
-        // 리뷰 목록 조회
-        List<ReviewDto> userReviews = userService.getUserReviews(requestedUser);
-
-
-        // 결과 반환
-        return ResponseEntity.ok(Map.of(
-                "reviews", userReviews
-        ));
-    }
+    
 
     //내가 작성한 게시글 조회
     @GetMapping("/uid/mypost")
@@ -74,7 +50,7 @@ public class MypageController {
         ));
     }
 
-    //내가 작성한 게시글 조회
+    //내가 작성한 리뷰 조회
     @GetMapping("/uid/myreviews")
     public ResponseEntity<?> getMyReviews(Authentication authentication) {
         String userId = authentication.getName();
@@ -96,19 +72,6 @@ public class MypageController {
         ));
     }
 
-    // 글 작성
-    @PostMapping("/reviews")
-    public ResponseEntity<?> createReview(@RequestBody ReviewDto reviewDto, Authentication authentication) {
-        String authenticatedUserId = authentication.getName();
-
-        // 작성자 설정
-        UserDto currentUser = userService.getOneUser(authenticatedUserId);
-        reviewDto.setUser(currentUser.toEntity());
-
-        // 글 작성
-        Review createdReview = reviewService.createReview(reviewDto.toEntity());
-        return ResponseEntity.status(HttpStatus.CREATED).body(ReviewDto.fromEntity(createdReview));
-    }
 
     // 리뷰 수정
     @PutMapping("/reviews/{reviewId}")
@@ -116,7 +79,7 @@ public class MypageController {
         String authenticatedUserId = authentication.getName();
 
         // 수정하려는 리뷰 확인
-        Review existingReview = reviewService.findReviewById(reviewId);
+        ReviewDto existingReview = reviewService.findReviewById(reviewId);
 
         // 권한 확인
         if (existingReview.getUser().getId() != Long.parseLong(authenticatedUserId)) {
@@ -135,9 +98,9 @@ public class MypageController {
         String authenticatedUserId = authentication.getName();
 
         // 삭제하려는 리뷰 확인
-        Review existingReview = reviewService.findReviewById(reviewId);
-
-        if (existingReview.getUser().getId() != Long.parseLong(authenticatedUserId)) {
+        ReviewDto existingReview = reviewService.findReviewById(reviewId);
+        System.out.println(existingReview.getUser().getUserId());
+        if (!authenticatedUserId.equals(existingReview.getUser().getUserId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제 권한이 없습니다.");
         }
 

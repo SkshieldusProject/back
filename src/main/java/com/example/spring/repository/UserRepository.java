@@ -1,6 +1,5 @@
 package com.example.spring.repository;
 
-import com.example.spring.dto.ReviewDto;
 import com.example.spring.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
