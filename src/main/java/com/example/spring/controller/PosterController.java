@@ -22,11 +22,7 @@ public class PosterController {
     @GetMapping("")
     public ResponseEntity<?> getAllMovies() {
         try {
-            List<MovieDto> movieList = posterService.getAllMovies();
-            for(MovieDto movieDto : movieList) {
-                movieDto.setMoviePosts(null);
-                movieDto.setMovieReviews(null);
-            }
+            List<MovieDto> movieList = movieService.getAllMovies();
             return ResponseEntity.ok(Map.of("movies", movieList));
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body("Movie not found") ;
