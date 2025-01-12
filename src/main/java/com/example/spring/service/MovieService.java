@@ -107,4 +107,16 @@ public class MovieService {
         }
         return movieDtos;
     }
+
+    public List<MovieDto> getAllMovies() {
+        List<Movie> movies = movieRepository.findAll();
+        List<MovieDto> movieDtos = new ArrayList<>();
+        for(Movie movie : movies) {
+            MovieDto movieDto = MovieDto.fromEntity(movie);
+            movieDto.setMoviePosts(null);
+            movieDto.setMovieReviews(null);
+            movieDtos.add(movieDto);
+        }
+        return movieDtos;
+    }
 }
