@@ -57,7 +57,7 @@ public class MypageController {
 
     //내가 작성한 게시글 조회
     @GetMapping("/uid/mypost")
-    public ResponseEntity<?> getMyPost(Authentication authentication) {
+    public ResponseEntity<?> getMyPosts(Authentication authentication) {
         String userId = authentication.getName();
         UserDto requestedUser = userService.getOneUser(userId);
         if (requestedUser == null) {
@@ -71,6 +71,28 @@ public class MypageController {
         // 결과 반환
         return ResponseEntity.ok(Map.of(
                 "posts", userPosts
+        ));
+    }
+
+    //내가 작성한 게시글 조회
+    @GetMapping("/uid/myreviews")
+    public ResponseEntity<?> getMyReviews(Authentication authentication) {
+        String userId = authentication.getName();
+        UserDto requestedUser = userService.getOneUser(userId);
+        if (requestedUser == null) {
+            // 사용자 존재하지 않음
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+        }
+
+        // 게시글 목록 조회
+        List<ReviewDto> userReviews = userService.getUserReviews(requestedUser);
+        for (ReviewDto userReview : userReviews) {
+            userReview.setUser(null);
+        }
+
+        // 결과 반환
+        return ResponseEntity.ok(Map.of(
+                "reviews", userReviews
         ));
     }
 
@@ -125,7 +147,7 @@ public class MypageController {
     }
 
 
-    // 리뷰 작성
+    // 리뷰 작성 -> 이걸로 동작
     @PostMapping("/reviews/{movieId}/create")
     public ResponseEntity<?> createReview(@PathVariable long movieId , @RequestParam float score, @RequestParam String content,
                                           Authentication authentication) {
